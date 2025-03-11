@@ -1,92 +1,141 @@
 package no.dat102.hvl.veke10.oppg4;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class TabellMengde<T> implements MengdeADT<T> {
     private T[] elementer;
     private int antall;
+    private static final int INITIAL_CAPACITY = 10;
+
+    @SuppressWarnings("unchecked")
+    public TabellMengde() {
+        elementer = (T[]) new Object[INITIAL_CAPACITY];
+        antall = 0;
+    }
 
     @Override
     public boolean erTom() {
-        if (antallElementer() == Integer.parseInt(null)){
-            return true;
+        return antall == 0;
+    }
+
+    @Override
+    public boolean inneholder(T element) {
+        return finnIndeks(element) >= 0;
+    }
+
+    @Override
+    public boolean erDelmengdeAv(MengdeADT<T> annenMengde) {
+        for (int i = 0; i < antall; i++) {
+            if (!annenMengde.inneholder(elementer[i])) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     @Override
-    public boolean inneholder(Object element) {
-        if (element instanceof MengdeADT) {
-            return true;
+    public boolean erLik(MengdeADT<T> annenMengde) {
+        return this.erDelmengdeAv(annenMengde) && annenMengde.erDelmengdeAv(this);
+    }
+
+    @Override
+    public boolean erDisjunkt(MengdeADT<T> annenMengde) {
+        for (int i = 0; i < antall; i++) {
+            if (annenMengde.inneholder(elementer[i])) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     @Override
-    public boolean erDelmengdeAv(MengdeADT annenMengde) {
-        return false;
+    public MengdeADT<T> snitt(MengdeADT<T> annenMengde) {
+        TabellMengde<T> snittMengde = new TabellMengde<>();
+        for (int i = 0; i < antall; i++) {
+            if (annenMengde.inneholder(elementer[i])) {
+                snittMengde.leggTil(elementer[i]);
+            }
+        }
+        return snittMengde;
     }
 
     @Override
-    public boolean erLik(MengdeADT annenMengde) {
-        return false;
+    public MengdeADT<T> union(MengdeADT<T> annenMengde) {
+        TabellMengde<T> unionMengde = new TabellMengde<>();
+        for (int i = 0; i < antall; i++) {
+            unionMengde.leggTil(elementer[i]);
+        }
+        T[] andreElementer = annenMengde.tilTabell();
+        for (T e : andreElementer) {
+            unionMengde.leggTil(e);
+        }
+        return unionMengde;
     }
 
     @Override
-    public boolean erDisjunkt(MengdeADT annenMengde) {
-        return false;
+    public MengdeADT<T> minus(MengdeADT<T> annenMengde) {
+        TabellMengde<T> differanseMengde = new TabellMengde<>();
+        for (int i = 0; i < antall; i++) {
+            if (!annenMengde.inneholder(elementer[i])) {
+                differanseMengde.leggTil(elementer[i]);
+            }
+        }
+        return differanseMengde;
     }
 
     @Override
-    public MengdeADT snitt(MengdeADT annenMengde) {
-        return null;
+    public void leggTil(T element) {
+        if (!inneholder(element)) {
+            if (antall == elementer.length) {
+                utvidKapasitet();
+            }
+            elementer[antall++] = element;
+        }
     }
 
     @Override
-    public MengdeADT union(MengdeADT annenMengde) {
-        return null;
+    public void leggTilAlleFra(MengdeADT<T> annenMengde) {
+        T[] andreElementer = annenMengde.tilTabell();
+        for (T e : andreElementer) {
+            leggTil(e);
+        }
     }
 
     @Override
-    public MengdeADT minus(MengdeADT annenMengde) {
-        return null;
-    }
-
-    @Override
-    public void leggTil(Object element) {
-
-    }
-
-    @Override
-    public void leggTilAlleFra(MengdeADT annenMengde) {
-
-    }
-
-    @Override
-    public Object fjern(Object element) {
+    public T fjern(T element) {
         int indeks = finnIndeks(element);
         if (indeks >= 0) {
+            T fjernetElement = elementer[indeks];
             for (int i = indeks; i < antall - 1; i++) {
                 elementer[i] = elementer[i + 1];
             }
-            elementer[antall - 1] = null;
-            antall--;
-            return true;
+            elementer[--antall] = null;
+            return fjernetElement;
         }
-        return false;
+        return null;
     }
 
     @Override
-    public Object[] tilTabell() {
-        return new Object[0];
+    public T[] tilTabell() {
+        return Arrays.copyOf(elementer, antall);
     }
 
     @Override
     public int antallElementer() {
-        int count = 0;
-        for (int i = 0; i < tilTabell().length; i++) {
-            count += 1;
+        return antall;
+    }
+
+    private int finnIndeks(T element) {
+        for (int i = 0; i < antall; i++) {
+            if (Objects.equals(elementer[i], element)) {
+                return i;
+            }
         }
-        return count;
+        return -1;
+    }
+
+    private void utvidKapasitet() {
+        elementer = Arrays.copyOf(elementer, elementer.length * 2);
     }
 }
