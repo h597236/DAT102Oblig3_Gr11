@@ -1,6 +1,10 @@
 package no.dat102.hvl.veke10.oppg4;
 
-public class TabellMengde implements MengdeADT {
+import java.util.Arrays;
+
+public class TabellMengde<T> implements MengdeADT<T> {
+    private T[] elementer;
+    private int antall;
 
     @Override
     public boolean erTom() {
@@ -60,7 +64,16 @@ public class TabellMengde implements MengdeADT {
 
     @Override
     public Object fjern(Object element) {
-        return null;
+        int indeks = finnIndeks(element);
+        if (indeks >= 0) {
+            for (int i = indeks; i < antall - 1; i++) {
+                elementer[i] = elementer[i + 1];
+            }
+            elementer[antall - 1] = null;
+            antall--;
+            return true;
+        }
+        return false;
     }
 
     @Override
