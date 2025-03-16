@@ -30,10 +30,18 @@ public class LenketMengde {
     public void leggTil(Object data) {
         if (!inneholder(data)) {
             Node nyNode = new Node(data);
-            nyNode.next = head;
-            head = nyNode;
+            if (head == null) {
+                head = nyNode;
+            } else {
+                Node temp = head;
+                while (temp.next != null) {
+                    temp = temp.next;
+                }
+                temp.next = nyNode;
+            }
         }
     }
+
 
     public boolean erTom(){
         return head == null;
@@ -49,15 +57,17 @@ public class LenketMengde {
             return;
         }
 
-        Node root = head;
-        while (root.next != null) {
-            if (root.next.data.equals(data)) {
-                root.next = root.next.next;
+        Node temp = head;
+        while (temp.next != null) {
+            if (temp.next.data.equals(data)) {
+                temp.next = temp.next.next;
                 return;
             }
-            root = root.next;
+            temp = temp.next;
         }
     }
+
+
 
 
     public boolean erDelmengdeAv(LenketMengde annenMengde) {
@@ -73,22 +83,82 @@ public class LenketMengde {
 
 
     public boolean erLik(LenketMengde annenMengde) {
-        Node temp = head;
-        while (temp != null) {
-            if (!annenMengde.inneholder(temp.data)) {
+        Node root = head;
+        while (root != null) {
+            if (!annenMengde.inneholder(root.data)) {
                 return false;
             }
-            temp = temp.next;
+            root = root.next;
         }
-        temp = annenMengde.head;
-        while (temp != null) {
-            if (!inneholder(temp.data)) {
+        root = annenMengde.head;
+        while (root != null) {
+            if (!inneholder(root.data)) {
                 return false;
             }
-            temp = temp.next;
+            root = root.next;
         }
         return true;
     }
+
+    public boolean erDisjunkte(LenketMengde annenMengde) {
+        Node root = head;
+        while (root != null) {
+            if (annenMengde.inneholder(root.data)) {
+                return false;
+            }
+            root = root.next;
+        }
+        return true;
+    }
+
+    public LenketMengde snitt(LenketMengde annenMengde) {
+        LenketMengde snittMengde = new LenketMengde();
+        Node root = head;
+        while (root != null) {
+            if (annenMengde.inneholder(root.data)) {
+                snittMengde.leggTil(root.data);
+            }
+            root = root.next;
+        }
+        return snittMengde;
+    }
+
+    public LenketMengde union(LenketMengde annenMengde) {
+        LenketMengde unionMengde = new LenketMengde();
+
+        Node root = head;
+        while (root != null) {
+            unionMengde.leggTil(root.data);
+            root = root.next;
+        }
+
+        root = annenMengde.head;
+        while (root != null) {
+            unionMengde.leggTil(root.data);
+            root = root.next;
+        }
+
+        return unionMengde;
+    }
+
+
+    public LenketMengde differanse(LenketMengde annenMengde) {
+        LenketMengde differanseMengde = new LenketMengde();
+
+        Node root = head;
+        while (root != null) {
+            if (!annenMengde.inneholder(root.data)) {
+                differanseMengde.leggTil(root.data);
+            }
+            root = root.next;
+        }
+        return differanseMengde;
+    }
+
+
+
+
+
 
 
 
