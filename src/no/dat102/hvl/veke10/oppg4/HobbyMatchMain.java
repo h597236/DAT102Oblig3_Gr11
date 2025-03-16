@@ -23,7 +23,6 @@ public class HobbyMatchMain {
     }
 
     public static void main(String[] args) {
-        // Opprette tre personer med hobbyer
         Person arne = new Person("Arne", "jakt", "sykling", "venner", "data");
         Person maria = new Person("Maria", "jakt", "yoga", "data", "venner");
         Person ole = new Person("Ole", "fisking", "sykling", "data");
