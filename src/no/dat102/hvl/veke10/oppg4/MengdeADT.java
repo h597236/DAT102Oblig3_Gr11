@@ -91,4 +91,5 @@ public interface MengdeADT<T> {
      */
     int antallElementer();
 
+    MengdeADT<Object> differanse(MengdeADT<Object> annenMengde);
 }

@@ -36,7 +36,11 @@ public class TabellMengde<T> implements MengdeADT<T> {
 
     @Override
     public boolean erLik(MengdeADT<T> annenMengde) {
-        return this.erDelmengdeAv(annenMengde) && annenMengde.erDelmengdeAv(this);
+        // Først sjekker vi om mengdene har samme antall elementer
+        if (this.antallElementer() != annenMengde.antallElementer()) {
+            return false;
+        }
+        return this.erDelmengdeAv(annenMengde);
     }
 
     @Override
@@ -83,6 +87,12 @@ public class TabellMengde<T> implements MengdeADT<T> {
         }
         return differanseMengde;
     }
+
+    @Override
+    public MengdeADT<Object> differanse(MengdeADT<Object> annenMengde) {
+        return (MengdeADT<Object>) this.minus((MengdeADT<T>) annenMengde);
+    }
+
 
     @Override
     public void leggTil(T element) {
